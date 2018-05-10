@@ -87,8 +87,8 @@ dt <- sparkline_table(
   sparkline_column = which(colnames(summary_table) == "activity"),
   colnames = c("52 week conmmit activity" = "activity"))
 dt
+dt
 ```
-
 
 Open issues
 =====================================
@@ -108,4 +108,3 @@ issue_table <- mutate(issues,
 
 data_table(issue_table)
 ```
-
