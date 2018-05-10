@@ -4,6 +4,19 @@ parse_summary_issue <- function(x) {
 
   list(p1 = x$p1$totalCount %||% 0, bugs = "bug" %in% labels, features = "feature" %in% labels, unlabeled = !length(labels))
 }
+get_repo_status <- function(x){
+  message(x$repo)
+  readme <- x$README$text %||% character()
+  path <- tempfile()
+  writeLines(readme, path)
+  badges <- codemetar::extract_badges(path)
+  file.remove(path)
+  status_badge <- badges[grepl("Project Status", badges$text)|
+                           grepl("lifecycle", badges$text),]
+  message(status_badge)
+  glue::glue('<a href="{status_badge$link}"><img src="{status_badge$image_link}" alt="{status_badge$text}"></a>')
+  
+}
 parse_summary_repository <- function(x) {
   tibble::tibble(
     owner = x$owner$login,
@@ -11,7 +24,8 @@ parse_summary_repository <- function(x) {
     prs = x$prs$totalCount,
     watchers = x$watchers$totalCount,
     open_issues = x$open_issues$totalCount,
-    description = list(desc::desc(text = x$DESCRIPTION$text %||% character())))
+    description = list(desc::desc(text = x$DESCRIPTION$text %||% character())),
+    status = get_repo_status(x))
 }
 
 #' Compute an organization summary

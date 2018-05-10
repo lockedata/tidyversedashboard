@@ -34,6 +34,11 @@ query repoSummary($org:String!, $cursor:String) {
             text
           }
         }
+        README : object(expression: "master:README.md") {
+          ... on Blob {
+            text
+          }
+        }
       }
       pageInfo {
         endCursor

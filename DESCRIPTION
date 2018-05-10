@@ -20,4 +20,5 @@ Imports:
     gh,
     cranlogs
 Remotes:
-  jeroen/curl
+  jeroen/curl,
+  ropensci/codemetar
