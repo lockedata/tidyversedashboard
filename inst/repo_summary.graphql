@@ -1,6 +1,6 @@
 query repoSummary($org:String!, $cursor:String) {
   repositoryOwner(login: $org) {
-    repositories(first:20, affiliations: OWNER, orderBy: {field: PUSHED_AT, direction: DESC}, isFork: false, after: $cursor) {
+    repositories(first:20, affiliations: OWNER, orderBy: {field: PUSHED_AT, direction: DESC}, privacy: PUBLIC, isFork: false, after: $cursor) {
       nodes {
         owner {login},
         repo:name,
