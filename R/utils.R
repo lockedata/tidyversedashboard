@@ -70,3 +70,10 @@ sparkline_table <- function(data, sparkline_column, ...) {
 parse_datetime_8601 <- function(x) {
   as.POSIXct(x, format = "%Y-%m-%dT%H:%M:%SZ")
 }
+
+emojify <- function(string){
+  stringr::str_replace(string, 
+                       stringr::str_match(string, ":.*:"),
+                       emo::ji(stringr::str_remove_all(stringr::str_match(string, ":.*:"),
+                                                       ":")))
+}

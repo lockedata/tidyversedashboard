@@ -48,6 +48,7 @@ org_data <- function(org) {
                                   ghrecipes::is_package_repo)
   summary <- left_join(summary, repos)
   summary <- summary[summary$is_pkg, ]
+  summary <- dplyr::select(summary, - is_pkg)
   
   issues <- left_join(issues, repos)
   issues <- issues[issues$is_pkg, ]
@@ -66,7 +67,7 @@ org_data <- function(org) {
                         sum, na.rm = TRUE)
   
   summ_issues <- left_join(summ_issues1, summ_issues2)
-  
+  names(summ_issues) <- emojify(names(summ_issues))
   
   summary <- left_join(
     summary,
