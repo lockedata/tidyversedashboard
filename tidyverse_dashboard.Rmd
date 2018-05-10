@@ -45,7 +45,7 @@ tidyversedashboard::get_org_logo(org)
 ```
 
 ---
-title: "`r paste0(tidyversedashboard::get_org_name(org), " packages dashboard")`"
+title: "`r paste0(tidyversedashboard::get_org_name(org), "'s packages dashboard")`"
 ---
 
 
