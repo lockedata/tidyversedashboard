@@ -92,7 +92,6 @@ dt
 
 Open issues
 =====================================
-
 ```{r issue_summary}
 substitute_emoji <- function(x) {
   m <- gregexpr(":[^[:space:]]+:", x)
@@ -104,8 +103,8 @@ substitute_emoji <- function(x) {
 # linkify the titles, and replace emoji
 issue_table <- mutate(issues,
   title = glue::glue('<a rel="noopener" target="_blank" href="https://github.com/{owner}/{repo}/issues/{issue}">{title}</a>'),
-  labels = substitute_emoji(map_chr(labels, paste, collapse = ", "))) #%>%
-  #rename(!!emo::ji("+1") := p1)
+  labels = substitute_emoji(map_chr(labels, paste, collapse = ", "))) %>%
+  rename(!!emo::ji("+1") := p1)
 
 data_table(issue_table)
 ```
