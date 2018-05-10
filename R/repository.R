@@ -51,16 +51,27 @@ org_data <- function(org) {
   
   issues <- left_join(issues, repos)
   issues <- issues[issues$is_pkg, ]
+  browser()
+  summ_issues1 <- issues %>%
+    group_by(owner, repo) %>%
+    summarize(p1 = sum(p1),
+              unlabeled = sum(lengths(labels) == 0))
+  summ_issues2 <- issues %>%
+    group_by(owner, repo) %>%
+    tidyr::unnest(labels) %>%
+    dplyr::mutate(value = TRUE) %>%
+    tidyr::spread(labels, value, fill = FALSE)
+  summ_issues2 <- summ_issues2 %>%
+    dplyr::summarise_at(names(summ_issues2)[8:ncol(summ_issues2)],
+                        sum, na.rm = TRUE)
+  
+  summ_issues <- left_join(summ_issues1, summ_issues2)
+  
   
   summary <- left_join(
     summary,
-    issues %>%
-      group_by(owner, repo) %>%
-      summarize(p1 = sum(p1),
-                bugs = num_label(labels, "bug"),
-                features = num_label(labels, "feature"),
-                unlabeled = sum(lengths(labels) == 0))) %>%
-    replace_na(list(p1 = 0, bugs = 0, features = 0, unlabeled = 0))
+    summ_issues %>%
+    replace_na(list(p1 = 0, unlabeled = 0)))
 
   list(summary = summary, issues = issues)
 }
