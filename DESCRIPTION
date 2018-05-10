@@ -18,7 +18,8 @@ Imports:
     tibble,
     tidyr,
     gh,
-    cranlogs
+    cranlogs,
+    ghrecipes
 Remotes:
   jeroen/curl,
   ropensci/codemetar

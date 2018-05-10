@@ -5,7 +5,6 @@ parse_summary_issue <- function(x) {
   list(p1 = x$p1$totalCount %||% 0, bugs = "bug" %in% labels, features = "feature" %in% labels, unlabeled = !length(labels))
 }
 get_repo_status <- function(x){
-  message(x$repo)
   readme <- x$README$text %||% character()
   path <- tempfile()
   writeLines(readme, path)
@@ -13,9 +12,13 @@ get_repo_status <- function(x){
   file.remove(path)
   status_badge <- badges[grepl("Project Status", badges$text)|
                            grepl("lifecycle", badges$text),]
-  message(status_badge)
-  glue::glue('<a href="{status_badge$link}"><img src="{status_badge$image_link}" alt="{status_badge$text}"></a>')
-  
+  if(!is.null(status_badge)){
+    glue::glue('<a href="{status_badge$link}"><img src="{status_badge$image_link}" alt="{status_badge$text}"></a>')
+    
+  }else{
+    ""
+  }
+   
 }
 parse_summary_repository <- function(x) {
   tibble::tibble(
@@ -39,6 +42,16 @@ org_data <- function(org) {
   summary <- map_dfr(res, function(x) map_dfr(x$repositoryOwner$repositories$nodes, parse_summary_repository))
   issues <- map_dfr(res, function(x) map_dfr(x$repositoryOwner$repositories$nodes, parse_issues_repository))
 
+  # filter only packages
+  repos <- unique(summary[, c("owner", "repo")])
+  repos$is_pkg <- purrr::map2_lgl(repos$owner, repos$repo,
+                                  ghrecipes::is_package_repo)
+  summary <- left_join(summary, repos)
+  summary <- summary[summary$is_pkg, ]
+  
+  issues <- left_join(issues, repos)
+  issues <- issues[issues$is_pkg, ]
+  
   summary <- left_join(
     summary,
     issues %>%
