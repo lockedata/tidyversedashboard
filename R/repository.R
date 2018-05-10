@@ -49,10 +49,8 @@ org_data <- function(org) {
   summary <- left_join(summary, repos)
   summary <- summary[summary$is_pkg, ]
   summary <- dplyr::select(summary, - is_pkg)
-  
   issues <- left_join(issues, repos)
   issues <- issues[issues$is_pkg, ]
-  browser()
   summ_issues1 <- issues %>%
     group_by(owner, repo) %>%
     summarize(p1 = sum(p1),
@@ -67,12 +65,16 @@ org_data <- function(org) {
                         sum, na.rm = TRUE)
   
   summ_issues <- left_join(summ_issues1, summ_issues2)
-  names(summ_issues) <- emojify(names(summ_issues))
+  names(summ_issues) <- purrr::map_chr(names(summ_issues),
+                                       emojify)
   
-  summary <- left_join(
-    summary,
-    summ_issues %>%
-    replace_na(list(p1 = 0, unlabeled = 0)))
+  if(nrow(summ_issues) > 0){
+    summary <- left_join(
+      summary,
+      summ_issues %>%
+        replace_na(list(p1 = 0, unlabeled = 0)))
+  }
+  
 
   list(summary = summary, issues = issues)
 }

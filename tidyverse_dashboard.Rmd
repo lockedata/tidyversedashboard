@@ -1,6 +1,8 @@
 ---
 output:
   flexdashboard::flex_dashboard:
+    logo: logo.png
+    favicon: logo.png
     orientation: rows
     vertical_layout: fill
     theme: paper
@@ -10,8 +12,8 @@ params:
     label: Start date of report
     value: !r lubridate::today() - lubridate::ddays(30)
     input: date
-  orgs:
-    label: GitHub organizations
+  org:
+    label: GitHub organization
     value: lockedata
     input: text
 ---
@@ -37,11 +39,13 @@ gh_colors <- list(
   purple = "#6f42c1")
 start <- params$start
 duration <- format(today() - start, format = "%d")
-orgs <- scan(text = params$orgs, what = "character", sep = ",", strip.white = TRUE, quiet = TRUE)
+org <- scan(text = params$org, what = "character", sep = ",", strip.white = TRUE, quiet = TRUE)
+tidyversedashboard::get_org_logo(org)
+
 ```
 
 ---
-title: "`r paste0(tools::toTitleCase(orgs[[1]]), ' repository dashboard')`"
+title: "`r paste0(tidyversedashboard::get_org_name(org), "'s packages dashboard")`"
 ---
 
 
@@ -51,7 +55,7 @@ options(repos = c(CRAN='https://cloud.r-project.org'))
 ```
 
 ```{r repo_stats, include = FALSE, cache = on_macos}
-repo_data <- map(orgs, org_data)
+repo_data <- map(org, org_data)
 
 repo_summary <- map_dfr(repo_data, "summary")
 issues <- map_dfr(repo_data, "issues")

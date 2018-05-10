@@ -71,9 +71,43 @@ parse_datetime_8601 <- function(x) {
   as.POSIXct(x, format = "%Y-%m-%dT%H:%M:%SZ")
 }
 
+#' Get org logo
+#'
+#' @param org 
+#'
+#' @return Path to logo
+#' @export
+#'
+#' @examples
+#' get_org_logo("lockedata")
+get_org_logo <- function(org){
+  glue::glue("https://github.com/{org}.png") %>%
+  magick::image_read() %>%
+    magick::image_resize("48x48") %>%
+    magick::image_write("logo.png")
+}
+
+#' Get org name
+#'
+#' @param org 
+#'
+#' @return string
+#' @export
+#'
+#' @examples
+#' get_org_name("r-lib")
+get_org_name <- function(org){
+  gh::gh("GET /orgs/:org",
+         org = org)$name
+}
+
 emojify <- function(string){
-  stringr::str_replace(string, 
-                       stringr::str_match(string, ":.*:"),
-                       emo::ji(stringr::str_remove_all(stringr::str_match(string, ":.*:"),
-                                                       ":")))
+  if(stringr::str_count(string, ":") == 2){
+    stringr::str_replace(string, 
+                         stringr::str_match(string, ":.*:"),
+                         emo::ji(stringr::str_remove_all(stringr::str_match(string, ":.*:"),
+                                                         ":")))
+  }else{
+    string
+  }
 }
